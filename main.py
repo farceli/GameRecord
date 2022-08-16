@@ -19,6 +19,7 @@ def read_config():
     con = configparser.ConfigParser()
     con.read(file, encoding='utf-8')
     ini_dict['barkUrl_farceLi'] = dict(con.items('bark_url'))['farceli']
+    ini_dict['barkUrl_qiaoqiao'] = dict(con.items('bark_url'))['qiaoqiao']
     ini_dict['harPath_wx'] = dict(con.items('har_path'))['wx']
     ini_dict['harPath_qq'] = dict(con.items('har_path'))['qq']
     return ini_dict
@@ -26,7 +27,7 @@ def read_config():
 
 # 初始化
 # bark_url = read_config()['barkUrl_farceLi']  # 初始化bark_url(FarceLi)
-bark_url = read_config()['qiaoqiao']  # 初始化bark_url(qiaoqiao)
+bark_url = read_config()['barkUrl_qiaoqiao']  # 初始化bark_url(qiaoqiao)
 harPath_wx = read_config()['harPath_wx']  # 初始化harPath_wx
 harPath_qq = read_config()['harPath_qq']  # 初始化harPath_qq
 
@@ -134,11 +135,12 @@ def test(file_obj, area):
                 print("Err")
 
             current_cycle_body = '当前周期：' + title  # 当前周期
-            statistical_period = '\n统计周期：' + start_time + '-30 00:00 ~ ' + max(month_game_list)
-            number_of_games = '\n游戏数量：' + str(len(month_game_list)) + '（上限：120）'
-            bark_body = current_cycle_body + statistical_period + number_of_games
-            bark_url = bark_url + bark_title + bark_body
-            requests.get(url=bark_url)
+            statistical_period_body = '\n统计周期：' + start_time + '-30 00:00 ~ ' + max(month_game_list)
+            number_of_games_body = '\n游戏数量：' + str(len(month_game_list)) + '（上限：120）'
+            number_of_timeouts_body = '\n超时数量：' + str(number_of_timeouts)
+            bark_body = current_cycle_body + statistical_period_body + number_of_games_body + number_of_timeouts_body
+            requests_bark_url = bark_url + bark_title + bark_body
+            requests.get(url=requests_bark_url)
 
     print(report)  # 打印报告表格
 

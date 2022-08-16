@@ -113,6 +113,6 @@ print('当前时间：', current_time)
 
 bark_title = '王者荣耀战绩推送/'
 bark_body = '测试'
-bark_url = 'https://api.day.app/vCUkNkJ3jUWt5MQcSn9Smd/' + bark_title + bark_body
+bark_url = '' + bark_title + bark_body
 
 requests.get(url=bark_url)

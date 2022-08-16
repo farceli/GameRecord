@@ -1,4 +1,4 @@
-har
+har/
 venv
 .idea
-conf/allconf.ini
+config/

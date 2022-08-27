@@ -22,17 +22,43 @@ def read_config():
     ini_dict['barkUrl_qiaoqiao'] = dict(con.items('bark_url'))['qiaoqiao']
     ini_dict['harPath_wx'] = dict(con.items('har_path'))['wx']
     ini_dict['harPath_qq'] = dict(con.items('har_path'))['qq']
+    ini_dict['amount_game'] = dict(con.items('amount'))['game']
     return ini_dict
 
 
 # 初始化
-# bark_url = read_config()['barkUrl_farceLi']  # 初始化bark_url(FarceLi)
-bark_url = read_config()['barkUrl_qiaoqiao']  # 初始化bark_url(qiaoqiao)
+bark_url = read_config()['barkUrl_farceLi']  # 初始化bark_url(FarceLi)
+# bark_url = read_config()['barkUrl_qiaoqiao']  # 初始化bark_url(qiaoqiao)
 harPath_wx = read_config()['harPath_wx']  # 初始化harPath_wx
 harPath_qq = read_config()['harPath_qq']  # 初始化harPath_qq
 
+update_data = {
+    'amount_game': [{
+        'time': '2022-08-20',
+        'reason': '李奥琦拖鞋忘记放在鞋架上',
+        'type': 'add',
+        'num': 10
+    }, {
+        'time': '2022-08-26',
+        'reason': '李奥琦扣头',
+        'type': 'add',
+        'num': 10
+    }, {
+        'time': '2022-08-27',
+        'reason': '李奥琦拖鞋忘记放在鞋架上',
+        'type': 'add',
+        'num': 10
+    }],
+    'other game': [
+        '08-21 17:35',
+        '08-21 17:18'
+    ]
+}
+
 
 def test(file_obj, area):
+    amount_game = int(read_config()['amount_game'])  # 初始化游戏局数
+
     lines = file_obj.read()  # 读取全部内容
     file_obj.close()  # 关闭文件
     dict_str = json.loads(lines)  # 字符串转字典
@@ -76,6 +102,23 @@ def test(file_obj, area):
                 if deduplication[a] == deduplication[b]:
                     print("有重复")
                     break
+
+    if len(update_data) != 0:
+        if len(update_data['amount_game']) != 0:
+            for i in range(len(update_data['amount_game'])):
+                if update_data['amount_game'][i]['type'] == 'add':
+                    amount_game += update_data['amount_game'][i]['num']
+                elif update_data['amount_game'][i]['type'] == 'reduce':
+                    amount_game -= update_data['amount_game'][i]['num']
+                else:
+                    print(Tool.red_text('Err'))
+        if len(update_data['other game']) != 0:
+            for i in range(len(update_data['other game'])):
+                if update_data['other game'][i] in deduplication:
+                    # print(update_data['other game'][i])
+                    deduplication.remove(update_data['other game'][i])
+                # print(type(update_data['other game'][i]))
+                # print(type(deduplication[0]))
 
     report = prettytable.PrettyTable(['时间段', '详细对局', '数量', '开游戏时间>23:30的数量'])  # 创建报告表格Title
     report.add_row(
@@ -136,7 +179,7 @@ def test(file_obj, area):
 
             current_cycle_body = '当前周期：' + title  # 当前周期
             statistical_period_body = '\n统计周期：' + start_time + '-30 00:00 ~ ' + max(month_game_list)
-            number_of_games_body = '\n游戏数量：' + str(len(month_game_list)) + '（上限：120）'
+            number_of_games_body = '\n游戏数量：' + str(len(month_game_list)) + '（上限：' + str(amount_game) + '）'
             number_of_timeouts_body = '\n超时数量：' + str(number_of_timeouts)
             bark_body = current_cycle_body + statistical_period_body + number_of_games_body + number_of_timeouts_body
             requests_bark_url = bark_url + bark_title + bark_body

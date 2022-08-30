@@ -6,11 +6,6 @@ import requests
 import tool.universalTool as Tool  # 自动以工具
 import configparser  # 读取ini
 
-'''
-TODO:
-    1、完善详细信息（P1）
-'''
-
 
 #  读取配置文件
 def read_config():
@@ -18,19 +13,17 @@ def read_config():
     file = 'config/allconf.ini'
     con = configparser.ConfigParser()
     con.read(file, encoding='utf-8')
-    ini_dict['barkUrl_farceLi'] = dict(con.items('bark_url'))['farceli']
-    ini_dict['barkUrl_qiaoqiao'] = dict(con.items('bark_url'))['qiaoqiao']
-    ini_dict['harPath_wx'] = dict(con.items('har_path'))['wx']
-    ini_dict['harPath_qq'] = dict(con.items('har_path'))['qq']
-    ini_dict['amount_game'] = dict(con.items('amount'))['game']
+    for sections in con.sections():
+        for options in con.options(sections):
+            ini_dict[sections + '_' + options] = con.get(sections, options)
     return ini_dict
 
 
 # 初始化
-bark_url = read_config()['barkUrl_farceLi']  # 初始化bark_url(FarceLi)
+bark_url = read_config()['bark_url_farceli']  # 初始化bark_url(FarceLi)
 # bark_url = read_config()['barkUrl_qiaoqiao']  # 初始化bark_url(qiaoqiao)
-harPath_wx = read_config()['harPath_wx']  # 初始化harPath_wx
-harPath_qq = read_config()['harPath_qq']  # 初始化harPath_qq
+harPath_wx = read_config()['har_path_wx']  # 初始化harPath_wx
+harPath_qq = read_config()['har_path_qq']  # 初始化harPath_qq
 
 update_data = {
     'amount_game': [{
@@ -45,6 +38,11 @@ update_data = {
         'num': 10
     }, {
         'time': '2022-08-27',
+        'reason': '李奥琦拖鞋忘记放在鞋架上',
+        'type': 'add',
+        'num': 10
+    }, {
+        'time': '2022-08-29',
         'reason': '李奥琦拖鞋忘记放在鞋架上',
         'type': 'add',
         'num': 10
@@ -81,19 +79,6 @@ def test(file_obj, area):
         for detailed in data_list:
             game_time = detailed['gametime']  # 获取游戏开始时间
             deduplication.append(game_time)  # 把每一个gametile添加到去重列表中
-            # # 获取游戏结果
-            # game_result = ''
-            # if detailed['gameresult'] == 1:
-            #     game_result = '胜利'
-            # elif detailed['gameresult'] == 2:
-            #     game_result = '失败'
-            # else:
-            #     ame_result = '特殊游戏结果'
-            #
-            # if game_time[-5:] >= '23:30':
-            #     table.add_row(['\033[31m' + game_time + '\033[0m', game_result])  # 将每一项添加到表格中
-            # else:
-            #     table.add_row([game_time, game_result])
 
     # 检查是否有重复日期
     for a in range(len(deduplication)):

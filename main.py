@@ -153,7 +153,8 @@ def test(file_obj, area):
         else:
             report.add_row([title, for_list(month_game_list), len(month_game_list), number_of_timeouts])
 
-        current_time = time.strftime('%m-%d %H:%M')
+        # current_time = time.strftime('%m-%d %H:%M')
+        current_time = '08-29 23:59'
         if start_time + '-30 00:00 ~ ' <= current_time <= end_time + '-29 23:59':
             if area == 'wx':
                 bark_title = '[微信区]王者荣耀当前周期战绩推送/'
